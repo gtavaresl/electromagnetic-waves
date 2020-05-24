@@ -6,6 +6,7 @@ from matplotlib import animation
 import argparse
 import time
 
+#degree function
 def u(t):
     return 1 if t >= 0 else 0
 
@@ -13,7 +14,8 @@ def Vs(t, s):
     #s == 1 => pulse
     #else => degree
     return u(t)-u(t-((K*dz)/(10*Uf))) if s == 1 else 2*u(t)
-    
+
+#update animation    
 def update(n):
     line[0].set_ydata(i[n])
     line[1].set_ydata(v[n])
@@ -27,16 +29,17 @@ ap.add_argument("-k", "--K", default = int(500), help = "number of iterations in
 ap.add_argument("-r", "--reflections", default = int(10), help = "number of reflections")
 args = vars(ap.parse_args())
 
+
+#Constants
 Uf = 2.7e8
 Z0 = 50
-Rs = 75
-Rl = int(args["charge"])
-s = int(args["source"])
-
-
 L = Z0/Uf
 C = 1/(Z0*Uf)
+Rs = 75
 
+#Variables
+Rl = int(args["charge"])
+s = int(args["source"])
 dz = 1e-3
 r = 0.5
 dt = r*(dz/Uf)
@@ -44,16 +47,17 @@ K = int(args["K"])
 N = int((int(args["reflections"])*K)/r) 
 #Total = N/dt
 
-
+#Arrays
 v = np.zeros((N,K))
 i = np.zeros((N,K-1))
 z = np.array(range(K-1))*dz
+#t = np.array(range(N))*dt
 
-
+#beta_1
 b1 = (2*dt)/(Rs*C*dz)
 
 flag_short = False
-
+#Theorical Vinf
 if Rl < 0:
     Vinf = Vs(N*dt,s)
 else:
@@ -61,7 +65,7 @@ else:
 
 #Open circuit
 b2 = 0
-Iinf = 0#Vinf/Rl
+Iinf = 0
 flag_open = True
 
 if Rl == 0:
@@ -89,6 +93,7 @@ i[0, 0] = Vs(0, s)/(Rs+Z0)
 v[0, 0] = Z0*i[0,0]
 v[0,0] *= (C*dz)/dt
 
+#Max values
 max_v = v[0,0]
 max_i = i[0,0]
 
@@ -123,27 +128,25 @@ print("[INFO] Results (Vinf, Iinf) = ", (np.mean(v[N-1]), np.mean(i[N-1])))
 print("[INFO] Max values: (V, I) = ", (max_v, max_i))
 
 fig, (ax1, ax2) = plt.subplots(2)
+#Plotting current
 line1,    = ax1.plot(z, i[0], color='r', label='Current (i) [A]')
-ax1.set_ylim(-1.5*max_i, 1.5*max_i)
+#line1,    = ax1.plot(t, [x[0] for x in i], color='r', label='Current (i) [A]')
+ax1.set_ylim(-max_i, max_i)
 ax1.legend()
 ax1.grid(True)
 
-
+#Plotting voltage
 z = np.append(z, [(K-1)*dz])
 line2,    = ax2.plot(z, v[0], color='b', label='Voltage (v) [V]')
-ax2.set_ylim(-1.5*max_v, 1.5*max_v)
+#line2,    = ax2.plot(t, [x[0] for x in v], color='b', label='Voltage (v) [V]')
+ax2.set_ylim(-max_v, max_v)
 ax2.legend()
 ax2.grid(True)
 
 line = (line1, line2)
 plt.xlabel('Distance (z) [m]')
-'''
-Writer = animation.writers['ffmpeg']
-writer = Writer(fps=30, metadata=dict(artist='Me'), bitrate=1800)
-matplotlib.use("Agg")
-'''
+#plt.xlabel('Time (t) [s]')
+
 ani = animation.FuncAnimation(fig, update, np.array(range(N)), interval = 1, blit = True, repeat = False)
 
-#ani.save('s1k1000c-1r4.mp4', writer=writer)
-
-#plt.show()
+plt.show()
