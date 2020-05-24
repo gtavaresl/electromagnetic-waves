@@ -122,34 +122,28 @@ print("[INFO] Time spend = ", fim)
 print("[INFO] Results (Vinf, Iinf) = ", (np.mean(v[N-1]), np.mean(i[N-1])))
 print("[INFO] Max values: (V, I) = ", (max_v, max_i))
 
-t = np.array(range(N))*dt
-
 fig, (ax1, ax2) = plt.subplots(2)
 line1,    = ax1.plot(z, i[0], color='r', label='Current (i) [A]')
-#line1,    = ax1.plot(t, [x[0] for x in i], color='r', label='Current (i) [A]')
-ax1.set_ylim(-max_i, max_i)
+ax1.set_ylim(-1.5*max_i, 1.5*max_i)
 ax1.legend()
 ax1.grid(True)
 
 
 z = np.append(z, [(K-1)*dz])
 line2,    = ax2.plot(z, v[0], color='b', label='Voltage (v) [V]')
-#line2,    = ax2.plot(t, [x[0] for x in v], color='b', label='Voltage (v) [V]')
-ax2.set_ylim(-max_v, max_v)
+ax2.set_ylim(-1.5*max_v, 1.5*max_v)
 ax2.legend()
 ax2.grid(True)
 
 line = (line1, line2)
 plt.xlabel('Distance (z) [m]')
-#plt.xlabel('Time (t) [s]')
 '''
 Writer = animation.writers['ffmpeg']
 writer = Writer(fps=30, metadata=dict(artist='Me'), bitrate=1800)
 matplotlib.use("Agg")
 '''
-
 ani = animation.FuncAnimation(fig, update, np.array(range(N)), interval = 1, blit = True, repeat = False)
 
 #ani.save('s1k1000c-1r4.mp4', writer=writer)
 
-plt.show()
+#plt.show()
