@@ -32,3 +32,9 @@ python FDTD.py -h
 ```"-k" ou "--K"```: Escolhe o número de divisões no comprimento. Default = 500;
 
 ```"-r" ou "--reflections"```: Escolhe o número de reflexões da onda, determinando o tempo total da simulação. Default = 10;
+
+- Exemplo de utilização:
+```
+python FDTD.py -s 1 -k 1000 -r 3 -c 0
+```
+
