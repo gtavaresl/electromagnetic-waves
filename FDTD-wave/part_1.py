@@ -5,58 +5,70 @@ import matplotlib.pyplot as plt
 def f_tau(N, S):
     return 1+(1/(S**2))*(math.cos((2*math.pi*S)/N)-1)
 
-n = 100
-N = np.linspace(1, 10, num = n)
-S = 1/2#math.sqrt(2)
+def Ntrans(S):
+    return (2*math.pi*S)/math.acos(1-2*(S**2))
 
-
-Ntrans = (2*math.pi*S)/math.acos(1-2*(S**2))
-print('Ntrans = ', Ntrans)
-at = np.zeros(n)
-
-Vp = np.zeros(n)
-
-
-for i in range(n):
-    if N[i] >= Ntrans:
-        k = (math.acos(1+4*(math.cos(math.pi/N[i])-1)))
-    else:
-        k = math.pi
-        tau = f_tau(N[i], S)
-        at[i] = -math.log(-tau-math.sqrt((tau**2)-1))
-    Vp[i] = (2*math.pi)/(N[i]*k)
+def theta(N):
+    return 1+4*(math.cos(math.pi/N)-1)
 
 # fig 2.1
 
-fig, (ax1, ax2) = plt.subplots(2)
+def fig_2_1(S, n):
+    print('[INFO] Ntrans = ', Ntrans(S))
+    N = np.linspace(1, 10, num = n)
+    at = np.zeros(n)
+    Vp = np.zeros(n)
+    for i in range(n):
+        if  N[i] <= Ntrans(S):
+            k = math.pi
+            tau = f_tau(N[i], S)
+            at[i] = -math.log(-tau-math.sqrt((tau**2)-1))
+        else:
+            k = math.acos(f_tau(N[i], S))
+        Vp[i] = (2*math.pi)/(N[i]*k)
 
-ax1.plot(N, Vp,'r', label = 'Numerical phase velocity')
-ax3 = ax1.twinx()
-ax3.plot(N, at, 'b--', label = 'Attenuation constant')
+    fig, ax1 = plt.subplots()
 
-ax1.set_ylabel('Numerical Phase Velocity (nomalized to c)')
-ax1.legend()
+    ax1.plot(N, at, 'b--', label = 'Attenuation constant')
+    ax2 = ax1.twinx()
+    ax2.plot(N, Vp,'r', label = 'Numerical phase velocity')
 
-ax3.set_ylabel('Attenuation Constant (nepers/grid cell)')
-ax3.set_ylim(0, 6)
-ax3.legend()
+    ax2.set_ylabel('Numerical Phase Velocity (nomalized to c)')
+    #ax2.legend()
+    ax2.set_ylim(0, 2)
 
-ax1.axvline(x = Ntrans, color = 'g', linestyle = '--')
+    ax1.set_ylabel('Attenuation Constant (nepers/grid cell)')
+    ax1.set_ylim(0, 6)
 
-
-
-
-N = np.array(range(3,80))
-Vp = np.zeros(np.size(N))
-
-for i in range(np.size(N)):
-    k = (math.acos(1+4*(math.cos(math.pi/N[i])-1)))
-    Vp[i] = (2*math.pi)/(N[i]*k)
-
-Vp = np.log10(100*(1-Vp))
+    ax1.axvline(x = Ntrans(S), color = 'g', linestyle = '--', label = 'Transition point')
+    ax1.legend()
+    
+    plt.xlim(1,10)
+    plt.xlabel('Grid Sampling Density (points per free-space wavelength)')
+    plt.show()
 
 # fig 2.2
 
-ax2.plot(N, Vp, color='b')
+def fig_2_2(S, n):
+    print('[INFO] Ntrans = ', Ntrans(S))
+    N = np.linspace(3, 80, num = n)
+    Vp = np.zeros(np.size(N))
 
-plt.show()
+    for i in range(np.size(N)):
+        k = math.acos(f_tau(N[i], S))
+        Vp[i] = (2*math.pi)/(N[i]*k)
+
+    Vp = 100*(1-Vp)
+    # fig 2.2
+
+    label = 'S = ' + str(S)
+    plt.plot(N, Vp, color='b', label = label)
+    plt.yscale('log')
+    plt.ylim(10**-2, 10**2)
+    plt.xlabel('Grid Sampling Density (points per free-space wavelength)')
+    plt.ylabel('Phase Velocity Error (%)')
+    plt.legend()
+    plt.show()
+
+#fig_2_1(1/math.sqrt(2), 100)
+fig_2_2(1/2, 100)

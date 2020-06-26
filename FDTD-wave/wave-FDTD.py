@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 um = lambda t: 1 if t >= 0 else 0
 v = lambda n, S: um(n) - um(n-(40/S))
-gauss = lambda n, S: math.exp(-((n*S-40)**2)/(2*(10**2)))
+gauss = lambda n, S: math.exp(-((n*S-40)**2)/200)
 
 def FDTD(S, I, N, s):
     u = np.zeros((N,I))
@@ -25,7 +25,8 @@ def fig_2_3_4(S0, s):
     u = FDTD(S, I, N, s)
 
     label = 'S = ' + str(S0)
-    plt.plot(np.array(range(I)), u[int(150/S0)], label = label)
+    plt.plot(np.array(range(I)), u[int(190/S0)], label = label)
+    plt.ylim(-0.2, 1.2)
     plt.legend()
 
 def fig_2_5():
@@ -37,12 +38,14 @@ def fig_2_5():
 
     plt.plot(np.array(range(I)), u[250])
     plt.axvline(x = 140, color = 'r', linestyle = '--')
+    plt.ylim(-0.8, 0.6)
+    plt.xlim(0, 200)
 
 def fig_2_6():
     S = lambda i: 1.0005
     I = 220
     N = 400
-    s = gauss
+    s = lambda n, S: math.exp(-((n-60)**2)/(2*(10**2)))
 
     u = FDTD(S, I, N, s)
 
@@ -65,7 +68,7 @@ def fig_2_7():
     I = 220
     N = 300
     #precisa consertar essa fonte
-    s = lambda n, S: math.exp(-((n*S-60)**2)/(2*(5**2)))
+    s = lambda n, S: math.exp(-((n-60)**2)/100)
 
     u = FDTD(S, I, N, s)
 
@@ -82,7 +85,11 @@ def fig_2_7():
     #plt.legend()
     
 
-fig_2_7()
+#fig_2_3_4(1, gauss)
+#fig_2_3_4(0.5, gauss)
+#fig_2_5()
+#fig_2_6()
+#fig_2_7()
 plt.ylabel('Wavefunction u(i)')
 plt.xlabel('Grid i coordinate')
 plt.show()
