@@ -43,8 +43,9 @@ def fig_2_1(S, n):
     ax1.axvline(x = Ntrans(S), color = 'g', linestyle = '--', label = 'Transition point')
     ax1.legend()
     
+    ax1.set_xlabel('Grid Sampling Density (points per free-space wavelength)')
     plt.xlim(1,10)
-    plt.xlabel('Grid Sampling Density (points per free-space wavelength)')
+    
     plt.show()
 
 # fig 2.2
@@ -70,5 +71,7 @@ def fig_2_2(S, n):
     plt.legend()
     plt.show()
 
-#fig_2_1(1/math.sqrt(2), 100)
-fig_2_2(1/2, 100)
+#fig_2_1(1/2, 100)
+#fig_2_2(1/2, 100)
+fig_2_1(1/math.sqrt(2), 100)
+#fig_2_2(1/math.sqrt(2), 100)
