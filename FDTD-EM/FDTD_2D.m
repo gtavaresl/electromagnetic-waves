@@ -2,7 +2,7 @@ clear;
 
 % Simulation parameters
 Nd = 100;
-Nt = 150;
+Nt = 200;
 
 % Constants
 mi = pi*4e-7;
@@ -34,8 +34,8 @@ Hy = zeros(steps,steps);
 % Electric Conductivity
 sigma = ones(steps,steps);
 
-%k = 4e-6;
-k = 0;
+k = 4e-6;
+%k = 0;
 for i = 1:steps
     for j = 1:steps
         sigma(i,j) = k*(((i-xsource)^2+(j-ysource)^2)^0.5);
@@ -47,8 +47,8 @@ Ca= (2*epsilon-dt*sigma)./(2*epsilon+dt*sigma);
 Cb = ((2*dt)/delta)./(2*epsilon+dt*sigma);
 D = dt/(mi*delta);
 
-%V = VideoWriter('simulation-2D-epsilon');
-%open(V);
+V = VideoWriter('sim-2D-sigma.mp4','MPEG-4');
+open(V);
 
 for n = 1 : Nt
     %% FDTD
@@ -81,8 +81,8 @@ for n = 1 : Nt
     %goodplot()
     
     F = getframe(gcf);
-    %writeVideo(V,F);
+    writeVideo(V,F);
 
 end
 
-%close(V);
+close(V);
